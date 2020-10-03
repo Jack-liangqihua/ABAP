@@ -11,8 +11,8 @@ git branch
 git checkout （home/company）
 
 4、提交并推送分支
-git add .
-git commit -m  "描述" 
+git add . 
+git commit -m  "描述"  
 git push -u origin （home/company）
 
 5、分支合并
