@@ -1,7 +1,7 @@
 ﻿# ABAP
 ABAP
 
-
+```
 1、所有提交皆由分支（home/company），所有发布皆由主干（master）
 
 2、查看分支信息
@@ -26,3 +26,5 @@ git branch -d （home/company）
 
 8、删除远程子分支
 git push origin --delete （home/company）
+
+```
