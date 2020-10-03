@@ -21,5 +21,9 @@ git merge （master/main）
 
 6、推送主分支
 git push -u origin （master/main）
+<<<<<<< HEAD
+=======
+ 
+>>>>>>> main
 
 ```
