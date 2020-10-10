@@ -69,7 +69,7 @@ IF l_msgts NE '-'.(如果没switch off)
 
 相关T-code:(**很多是雷同的)
 ### FI 部分:
-```
+``` 
 OBA5:FI messge
 BD60:Additional data for message type
 OFMG:FOr FM Message
