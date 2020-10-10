@@ -60,7 +60,7 @@ i_dtype = i_dtype
 i_msgnr = i_msgnr
 IMPORTING
 e_msgty = l_msgts.
-``
+```
 IF l_msgts NE '-'.(如果没switch off)
 然后就是提示. 然后去读T100C 用户自定的messge type(Error,warnig, error0决定是否继续work.
 
