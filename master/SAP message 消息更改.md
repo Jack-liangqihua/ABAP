@@ -1,5 +1,5 @@
 # SAP消息修改
-
+```
 FI: OBA5|OFMG|OFPM
 
 CO: OPR4_ACT|OPR4_CK|OPR4_CKML|OPR4_CKPF|OPR4_KKA|OPR4_KKP|OPR4_KKS|
@@ -11,7 +11,7 @@ MM: OMRM|OKZZ|OMT4|OMCQ |O04C|
 SD: OVAH
 
 Others: OPR5|OPR1|OPR3|OPR6|OPR7|OPR8|OPR9|OPRCMFE|MSW1|MSW2
-
+```
 SAP修改消息内容和报错类型（OBA5)
 SAP消息也是这样,你可将所有能忽略的消息ignore让它鞠躬尽瘁死而后已为你工作.
 
@@ -22,12 +22,12 @@ SAP消息也是这样,你可将所有能忽略的消息ignore让它鞠躬尽瘁�
 错误不至于引起致命的系统逻辑错误.
 
 
-一.基本概念
+## 一.基本概念
 你可简单理解为消息是SAP为exception预警的一种手段.
 Application area:告诉你消息归属,分类吧.其实就是SE91所说的Message class
 
-二:消息相关最常用的table:
-
+## 二:消息相关最常用的table:
+```
 T100: SAP default Message,
 T160M :Message Control: Purchasing (System Messages)
 T100C: User_defined messaeg mainly for FI
@@ -36,7 +36,7 @@ T100S: Configurable system messages
 T100W: For Workflow
 T100U: 最后更改消息的user table
 T5CBN: PC Operation Conditions
-
+ 
 -------------------------------------------
 需要指出的是你必须注意做重要的三个表
 T100:包含所有的message
@@ -46,7 +46,9 @@ T100s:Configurable system messages顾名思义就是你能设置的消息.
 中你将看到F5 060不在其中,因为这是将影响财务的致命错误,当然OBA5是不允许你去设置的.
 **欺骗SAP使用OBA5强行Switch off F5 060.
 -----------------------------------------------------
-三.建立查询消息.
+
+``` 
+## 三.建立查询消息.
 T-code:SE91
 你可为自己的程序和Enhancement编写消息.
 通常在程序中你能看到类似.
@@ -62,10 +64,11 @@ IF l_msgts NE '-'.(如果没switch off)
 然后就是提示. 然后去读T100C 用户自定的messge type(Error,warnig, error0决定是否继续work.
 
 
-四.设置消息(这个应该对大家有点用处)
+## 四.设置消息(这个应该对大家有点用处)
 
 相关T-code:(**很多是雷同的)
-FI 部分:
+### FI 部分:
+```
 OBA5:FI messge
 BD60:Additional data for message type
 OFMG:FOr FM Message
@@ -76,11 +79,14 @@ F00-->***这个是send office message
 KD99:setup message
 KDNN:Setup messaeg
 
-MM-PUR部分:
+### MM-PUR部分:
+```
 O04C:For purchase
 OKZZ:Invoice Verification/Valuation
+```
 
-CO部分:
+### CO部分:
+```
 OPR4_ACT Multilevel Actual Settlement
 OPR4_CK Material Cost Estimate
 OPR4_CKML Closing and Calc. of Periodic Price
@@ -98,8 +104,9 @@ OPR7 Def. of Areas of Responsibility
 OPR8 Def. of Minimum Message Types (SAP)
 OPR9 Def. of Reference Objects (SAP)
 OPRCMFE User-Defined Messages
-
-SD部分"
+```
+### SD部分"
+```
 OVAH :SD Define Variable Messages
 ------------------------------------------------------------
 SAP允许用户修改的消息都save在T100S中,你配置后的消息从T100C可看到
@@ -139,15 +146,16 @@ M/76 Display s: Entry
 M/77 Maintain Schema: Entry Sheet
 M/78 Disp. Determ. Schema: Entry
 M/N1 Maintain accesses (fr.gds - purch.)
+```
 
-
-五.重置警告消息.
+## 五.重置警告消息.
+```
 将消息warning change to display显示.
 MSW1 Reset Warnings
 MSW2 Reset Warnings
-
-六附录: Message_related tables:(部分)
-
+```
+## 六附录: Message_related tables:(部分)
+```
 T100: All message
 T100A: IDs for T100
 T100C: Control by User
@@ -272,3 +280,4 @@ WPXST: POS interface: status external subsystems (error s)
 WRPE: Replenishment: Error s
 WTMIGMESS: s Logged for Withholding Tax Changeover
 WTMIGMESSEXC: Withholding Tax Changeover: Alternative Types
+```
