@@ -52,6 +52,7 @@ T100s:Configurable system messages顾名思义就是你能设置的消息.
 T-code:SE91
 你可为自己的程序和Enhancement编写消息.
 通常在程序中你能看到类似.
+```
 CALL FUNCTION 'READ_CUSTOMIZED_MESSAGE'
 EXPORTING
 i_arbgb = i_arbgb
@@ -59,7 +60,7 @@ i_dtype = i_dtype
 i_msgnr = i_msgnr
 IMPORTING
 e_msgty = l_msgts.
-
+``
 IF l_msgts NE '-'.(如果没switch off)
 然后就是提示. 然后去读T100C 用户自定的messge type(Error,warnig, error0决定是否继续work.
 
@@ -79,8 +80,8 @@ F00-->***这个是send office message
 KD99:setup message
 KDNN:Setup messaeg
 
-### MM-PUR部分:
 ```
+### MM-PUR部分:
 O04C:For purchase
 OKZZ:Invoice Verification/Valuation
 ```
