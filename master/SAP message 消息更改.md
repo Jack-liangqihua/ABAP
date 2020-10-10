@@ -82,6 +82,7 @@ KDNN:Setup messaeg
 
 ```
 ### MM-PUR部分:
+```
 O04C:For purchase
 OKZZ:Invoice Verification/Valuation
 ```
