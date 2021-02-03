@@ -1,0 +1,235 @@
+一,SAP系统管理常用到的事务代码
+1. SM51 SAP Servers System Monitoring
+2. SM21 SAP系统日志
+3. SRZL SAP计算机中心管理系统(CCMS) 建议初学者重点学习.
+4. RZ20 Alert Monitor. 工作负载报警监视器.(CCMS下的)
+5. ST06 Operating System Monitor,用于分析整个SAP技术栈的性能.
+6. ST03N Workload Moniter,负载监视器,用于钻取在线及批量负载,"最常用的40个"事务,峰值负载细节及某一时间内执行的事务.
+7. SSAA 用于执行常规的日,周和月的系统管理功能.
+8. SMLG 用于监控SAP登录负载运行是否均衡;用F5可以钻取面向特定用户组的性能数据.
+9. AL08 用于检查登录到某个SAP应用服务器上的最终用户及显示他们正在执行的事务.
+10. ST07 用于检查登录到整个系统的最终用户,系统用户可根据功能区域分类(如SAP ECC,FI,MM,PM,PS,SD等).
+11. SM66 用于查看SAP系统中与每个应用程序及批处理服务器的进程执行相关的系统级别的性能.
+12. ST22 用于查看ABAP dump,这样就可以鉴定程序错误.这有助于将这类问题反馈给到相关部门或开发组.
+附: SAP Online Help.http://help.sap.com 
+
+二,性能管理相关的CCMS事务
+
+(1)用户和应用服务器分布 ST07及AL08
+ST07可以让你看到包括所有的应用服务器在内的整个系统中有多少用户登录进来.还可以根据功能分区来将数字拆分细化,还可查看历史数据.
+AL08可以显示已登录终端用户总数,可根据用户登录的应用服务器进行划分,因此可对某个系统的应用服务器负载均衡情况进行分析.可显示每个终端用户在执行的事务,从而可以实时地对系统负载类型进行分析.
+
+(2)管理负载均衡 SMLG
+可用来查看某种登录负载均衡机制的工作情况.此事务可用于设置登录组,还可以监视每个登录组的性能.按F5可查看每个登录组的响应时统计数据.(SMLG可补充AL08的功能,显示所登录的用户数量,显示每个登录组的响应时.)
+
+(3)数据库概述与性能 DB02及ST04
+DB02可跟踪数据库如何随着时间的增长而增长,也可跟踪索引的数量以及它们的大小,数量和历史发展趋势.
+ST04(Database Performance Analysis)数据库性能分析事务,它可以实时地分析缓存命中率,逻辑读对物理读的对比,关键"缓冲区繁忙等待(Buffer Busy Waits)"值,以及更多其它信息.
+注意,如果需要确定最近某一种变动对数据库性能的影响,这些实时数据的统计数据是可以复位的.借助Detail Analysis Menu(详细分析菜单),你可根据特定SQL需求或表的访问来深入到整个活动,异常事件,资源消耗量以及更多的历史数据当中.
+
+(4)升级,锁定和磁盘子系统性能 SM12及SM13
+如果想要知道升级的应用情况是"提交"到数据库的情况是否存在锁定项(lock entry)的话,要通过SM12(数据锁定项,Database Lock Entries及SM13(管理员更新记录,Administrator Update Records)来完成.
+用SM12来浏览与某个数据库表,用户或客户相关的锁定项.
+用SM13来跟踪和监测实时的数据升级.
+
+(5)内存管理和优化统计 ST02
+优化统计(Tune Summary),能够实时查看每个SAP应用服务器的内存及多个缓冲区的运行情况.就某个负载而言,如果缓冲区没有正确配置或是未被优化,那么在Swaps列就会显示出缓冲区的值越积越大,并用红色高亮显示出来,这就我们就很容易鉴别出问题所在的区域.
+ST02不仅可以管理缓存,还可跟踪每台应用服务器的内存使用情况.要特别注意当前扩展内存的使用率(与高峰时期相比).同样,要经常检查堆内存(heap memory)的使用是否已最小化.
+堆内存是特定于工作过程的.当程序使用工作过程的共享内存时,它必须采用独立维护内存的PRIV模式.此时,正在执行的程序是无法切换到另一个工作过程的,它会被一直阻塞直到程序执行结束.程序结束后,系统会重启动工作过程,一切又恢复正常(程序在何处进出内存要视SAP系统的需要而定).
+(6)响应时和负载性能 ST03及ST03N
+监视自身的负荷是性能管理中最重要的一个组成部分.ST03及ST03N就可以执行负载监控器(workload monitor).它既可以为你显示总体工作负荷的情况,也可以根据对话,批处理,升级和其他任务类型来分拆显示.点击Transication Profile按钮就可以根据响应时对每种类型的结果进行排序.这里,你可以分析哪些工作消耗最多的数据库时间(DB请求时间),CPU时间和其它核心组件的响应时间的事务程序.你还可以查看不同的时间段内的合计值,时间段可以从15分钟到1个月.查看并跟踪每天每小时处理的总的对话数,这样就你可以了解一天内每个小时的工作负荷情况.
+此外,ST03N还能跟踪数据的直接读取,序列读取和变更(数据库更新或提交).此外,它还可以获得每个事务请求的平均字节数.这样就可以确定某个系统当前支持的磁盘负荷.
+除了纯粹的响应时指标之外,ST03的"Time Pfofile"和"Transaction Profile"按钮还支持量化某个特定时间段内的系统负荷,或是根据特定工作负荷来确定哪些事务是最常用的,从而产生了哪些相关硬件的负荷.
+事务ST03G使你可以查看并分析与外部系统相关的负荷,以及对跨多个系统的业务过程的系统性能分析.这是对ST03一个强有力的补充.
+一般来说,数据库正常运行时,应该符合以下几个参数值:
+(1)Data Buffer Quality至少为94%.在系统重启后,Buffer值一般不能立即读入,此时Qulity值也很低,所以通过等到Reads超过20 000 000以后,才来计算Qulity的值.
+(2)Time/user call<20ms
+(3)SQL area pinratio>97%.
+
+
+(7)OS监控器 ST06
+OS Monitor(ST06)是另一个可以显示大量实时性能数据的SAP事务.它包括了根据用户,系统和空闲时间来进行排序的CPU利用率,CPU进程队列(也称为CPU负荷计数).
+内存OS监控还支持检查短期历史数据;点击"Datail Analysis Menu,详细分析茶单"就可以访问到根据主硬件子系统及应用服务器划分的历史数据信息.
+有了这些历史数据,你就可以将在OS和数据库那里所收集到的磁盘性能指标以SAP可见的方式进行管理.你还可以查看过去24小时中每小时CPU的负载情况,这样容易确定负载峰值,还可监视并分析CPU的吞吐性能(如执行SP03N来查看某一段特定时间内的对话数量).同样,深入SAP性能数据库也使得从 OS监控器那里获取其他通用服务器或某一具体服务器的性能分析变得容易起来.你可以将这些数字与你通过基于硬件或OS的性能工具那里收集到的结果进行比较或是关联.
+OS监控器或事务ST06即提供了实时的性能快照也可以对历史数据进行访问.
+通过它可以综合分析出CPU,交换空间,以及内存的使用率,总结出操作系统的性能.
+
+(8)监视活动工作过程 SM50和SM66
+它们都可以查看系统中工作过程的活动情况.SM50显示了特定应用服务器(实际上是你现在登录的那台)所配置的全部工作过程,而SM66则显示了所有应用服务器上的全部活动工作过程.特别是SM66,它可以获取某台服务器平台上的活动用户或对话的数量;一般来讲,平台的速度越快,某段时间内的活动过程就越少.
+SM50:工作进程管理,一个应用服务器一般有DIA,UPD,ENQ,BTC,SPO五种类型的工作进程.
+DIA:为前台工作进程,一个instance至少要有两个DIA,否则根本起不来.
+UPD,UPD2是立即更新进程(有些系统中为VB1,VB2进程),其中UPD
+
+附:
+%pc可协助我们将原始SAP GUI输出加载到EXCEL中(其它多种格式也可以).
+
+三,其它
+
+SBIT Menu 菜单 
+SBTA Test background processing 后台处理测试 
+SBTU Background processing for user 对用户的后台处理 
+SM36 Define Background Job 定义后台作业 
+SM37 Background Job Overview 后台作业概览 
+SM39 Job Analysis 作业分析 
+SM49 Execute external OS commands 执行外部 OS 命令 
+SM61 Menu 菜单 
+SM62 Menu 菜单 
+SM63 Display/Maintain Operating Mode Sets 显示/保持操作方式设置 
+SM64 Release of an Event 事件的释放 
+SM65 Background Processing Analysis Tool 后台处理分析工具 
+SM67 Job Scheduling 作业调度 
+SM68 Job Administration 作业管理 
+SM69 Maintain external OS commands 维护外部 OS 命令 
+SMX Display Own Jobs 显示自己的作业 
+SPBM Monitoring parallel background tasks 监控类似的后台任务 
+SPBT Test: Parallel background tasks 文本:匹配后台任务 
+DB16 DB system check (trigger/browse) DB system check (trigger/browse) 
+DB17 DB system check (configure) DB system check (configure) 
+DB20 No.of table tupels acc. to stat. No.of table tupels acc. to stat. 
+DB21 Maintenance control table DBSTATC Maintenance control table DBSTATC 
+RZ01 Job Scheduling Monitor 作业计划监视器 
+RZ02 Network Graphics for SAP Instances 网络图SAP 
+RZ04 Maintain SAP Instances 保持 SAP 实例 
+RZ06 Alerts Thresholds Maintenance 警报门限维护 
+RZ08 SAP Alert Monitor SAP 报警监视器 
+RZ12 Maintain RFC server group assignment 维护 RFC 指定服务器组 
+SM66 Systemwide Work Process Overview 系统工作过程概述 
+SMLG Maintain Logon Group 维护登录组 
+SRZL Menu 菜单 
+SM02 System Messages 系统消息 
+SM04 User Overview 用户概览 
+SM13 Display Update Records 显示更新记录 
+SM50 Work Process Overview 工作进程概述 
+SM51 List of SAP Servers SAP服务器的清单 
+SM54 TXCOM maintenance TXCOM 维护 
+SM55 THOST Maintenance THOST 维持 
+SM56 Number Range Buffer 数字范围缓冲区 
+SMGW Gateway Monitor 网关监控器 
+ST07 Application monitor 应用程序监视器 
+AL01 SAP Alert Monitor SAP报警监视器 
+AL02 Database alert monitor 数据库警报监测器 
+AL03 Operating system alert monitor 操作系统警告监视器 
+AL04 Monitor call distribution 监视呼叫分配 
+AL05 Monitor current workload 监视当前的工作负荷 
+AL06 Performance: Upload/Download 执行:上载/下装 
+AL07 EarlyWatch Report 初期察看报告 
+AL08 Users Logged On 登录的用户 
+AL09 Data for database expertise 专家数据库的数据 
+AL10 Download to Early Watch 下载早观察 
+AL11 Display SAP Directories 显示SAP目录 
+AL12 Display table buffer (Exp. session) 显示表缓冲 
+AL13 Display Shared Memory (Expert mode) 显示共享内存 (输出方式) 
+AL15 Customize SAPOSCOL destination 自定义 SAPOSCOL 目的地 
+AL16 Local Alert Monitor for Operat.Syst. 操作系统的本地报警监视器 
+AL17 Remote Alert Monitor f.Operat. Syst. 操作系统的远程报警监视器 
+AL18 Local File System Monitor 本地的文件系统监视器 
+AL19 Remote File System Monitor 远程文件系统监视器 
+AL20 EarlyWatch Data Collector List EarlyWatch 数据收集器清单 
+AL21 ABAP Program analysis ABAP Program analysis 
+AL22 Dependent objects display Dependent objects display 
+DB01 Analyze exclusive lockwaits 分析互斥锁定等待 
+DB02 Analyze tables and indexes 分析表和索引 
+DB03 Parameter changes in database 在数据库中参数改变 
+DB05 Analysis of a table acc. to index Analysis of a table acc. to index 
+DB11 Early Watch Profile Maintenance 初期察看描述文件维护 
+DB12 Overview of Backup Logs 备份日志的概观 
+DB13 Database administration calendar 数据库管理日历 
+DB14 Show SAPDBA Action Logs 显示 SAPDBA 行为记录 
+DB15 CCMS - Document archiving CCMS - Document archiving 
+OS01 LAN check with ping 通过 ping 检查 LAN 
+OS02 Operating system configuration 操作系统配置 
+OS03 O/S Parameter changes O/S 参数更改 
+OS04 Local System Configuration 本地的系统配置 
+OS05 Remote System Cconfiguration 远程系统配置 
+OS06 Local Operating System Activity 本地的操作系统作业 
+OS07 Remote Operating System Activity 远程操作系统活动性 
+OSS1 Logon to Online Service System 注册到联机服务系统 
+SDBE Explain an SQL statement 匹配码对象（测试） 
+ST02 Setups/Tune Buffers 设置/调谐缓冲 
+ST03 Performance,SAP Statistics, Workload 性能,SAP 统计,工作负荷 
+ST04 Select DB activities 选定数据库中的活动 
+ST05 Trace for SQL, Enqueue, RFC, Memory SQL跟踪 
+ST06 Operating System Monitor 操作系统监视器 
+ST08 Network Monitor 网络器 
+ST09 Network Alert Monitor 网络敬报器 
+ST10 Table call statistics 表调用统计 
+ST4A Database: Shared cursor cache (ST04) Database: Shared cursor cache (ST04) 
+STAT Local transaction statistics 本地事务统计 
+STP4 Select DB activities Select DB activities 
+STUN Menu Performance Monitor 菜单性能监视器 
+TKOF Turn off Oracle trace 关闭 Oracle 跟踪 
+TKON Turn off Oracle trace 关闭 Oracle 跟踪 
+TKPR Display trace file 显示跟踪文件 
+TU01 Call Statistics 调用统计 
+TU02 Parameter changes 参数改变 
+SP00 Spool and related areas 假脱机及相关区域 
+SP01 Output Controller 输出控制 
+SP02 Display Output Requests 显示输出请求 
+SP03 Spool: Load Formats 假脱机:载入格式 
+SP1T Output Control (Test) 输出控制（测试） 
+SPAD Spool Administration 假脱机管理 
+SPAT Spool Administration (Test) 假脱机管理（测试） 
+SPCC Spool consistency check 假脱机一致性检查 
+SPIC Spool installation check 假脱机安装检查 
+SPTP Text elem. maint. for print formats 用于打印格式的文本元素维护 
+SP11 TemSe directory TemSe目录 
+SP12 TemSe Administration TemSe管理 
+SE92 Maintain System Log Messages 维护系统日志消息 
+SM20 System Audit Log 系统审计日志 
+SM21 System Log 系统日志 
+S001 CASE 工具菜单 CASE 工具菜单 
+S002 Menu Administration 菜单管理 
+SDW0 ABAP/4 Development WB Initial Screen ABAP/4 开发工作台初始屏幕 
+SYST Menu 菜单 
+SDMO Dynamic Menu (old) 动态菜单 (旧) 
+SMEN Session Manager Menus 会话管理菜单 
+SU55 Call the Session Manager menus 调用会话管理菜单 
+RE_GGREPO1 Test report 1 测试报表 1 
+RE_GGREPO2 Test report 1 测试报表 1 
+SU24 Auth. obj. check under transactions 事务中权限对象检查 
+SU25 Upgrade Tool for Profile Generator 配置文件生成器的升级工具 
+SU26 Upgrade tool for Profile Generator 配置文件生成器的升级工具 
+SUPC Profiles for activity groups 作业组的参数文件 
+SUPN Number range maint.: PROF_VARIS 编码范围维护: PROF_VARIS 
+SUPO Maintain org. levels 维护初始级别 
+SM0 Work Process Overview 工作处理概述 
+SU02 Maintain Authorization Profiles 维护权限参数文件 
+SU03 Maintain Authorizations 维护权限 
+SU10 Mass Changes to User Master Records 对用户主记录的大量修改 
+SU12 Mass Changes to User Master Records 用户主记录的大量修改 
+SU2 Maintain user parameter 维护用户参数 
+SU20 Maintain Authorization Fields 维护权限字段 
+SU21 Maintain Authorization Objects 维护权限对象 
+SU22 Auth. Object Usage in Transactions 事务中权限对象的用法 
+SU23 Load Tables in TAUTL 在 TAUTL 中装入表 
+SU52 Maintain User Parameters 维护用户参数 
+SU53 Display Check Values 显示检查值 
+SU54 Session Manager 会话管理器 
+SU56 Analyze User Buffer 分析用户缓冲区 
+SU80 Archive user change documents 存档用户更改文档 
+SU81 Archive user password change doc. 归档用户口令更改文档 
+SU82 Archive profile documents 档案参数文件文档 
+SU83 Archive authorization docs. 存档授权文档 
+SU84 Read archived user change documents 阅读已存档的用户修改文档 
+SU85 Read archived password change doc. 阅读已存档的口令修改文档 
+SU86 Read profile change documents 读参数文件更改文档 
+SU87 Read authorization change documents 读授权更改文档 
+SU96 Table maint.: Change SUKRIA 表维护：修改 SUKRIA 
+SU97 Table maint.: Display SUKRIA 表维护：显示 SUKRIA 
+SU98 Call report RSUSR008 调用报表 RSUSR008 
+SU99 Call report RSUSR008 调用报表 RSUSR008 
+SUIM Call AUTH reporting tree (info sys.) 调用 AUTH 报表树（信息系统） 
+SU01 User Maintenance 用户维护 
+SU01_NAV User maint. to include in navigation 包含在导航中的用户维护 
+SU01D User Display 用户显示 
+SU3 Maintain Users Own Data 维护用户自己的数据 
+SE01 Transport Organizer 传送组织者 
+SE03 Workbench Organizer: Tools 工作台组织器：工具 
+SE06 Set Up Workbench Organizer 设置工作台组织器 
+SE07 Transport System Status Display 传输系统状态显示 
+SE09 Workbench Organizer 工作平台组织者 
+SE10 Customizing Organizer 自定义组织者 
+SE17 General Table Display 通用表显示 
+STDR TADIR consistency check TADIR 一致性检查 
+SUIM 用户权限后台配置 
+STMS 传输管理系统 
