@@ -1,0 +1,68 @@
+*&---------------------------------------------------------------------*
+*&      Form  FRM_PRINT
+*&---------------------------------------------------------------------*
+*       text
+*----------------------------------------------------------------------*
+FORM FRM_PRINT .
+ 
+**********************************************************************
+  DATA: L_FNAME TYPE RS38L_FNAM.
+  CALL FUNCTION 'SSF_FUNCTION_MODULE_NAME'
+    EXPORTING
+      FORMNAME = 'Y_TEST_CLY_1'
+    IMPORTING
+      FM_NAME  = L_FNAME.
+ 
+  DATA: L_OUTPUT_OPTIONS  TYPE SSFCOMPOP,
+        L_TMP_CONTROL_PAR LIKE SSFCTRLOP,
+        L_JOB_OUTPUT_INFO TYPE SSFCRESCL.
+ 
+ 
+  L_OUTPUT_OPTIONS-TDIMMED   = 'X'.                      "立即打印标志
+ 
+  DATA: L_LINES TYPE I.
+  DESCRIBE TABLE LT_DATA LINES L_LINES.
+ 
+  LOOP AT LT_DATA.
+    CASE SY-TABIX.
+      WHEN 1.
+        L_TMP_CONTROL_PAR-NO_CLOSE = ABAP_TRUE.  "不关闭假脱机请求
+        L_TMP_CONTROL_PAR-NO_OPEN  = SPACE.
+      WHEN L_LINES.
+        L_TMP_CONTROL_PAR-NO_CLOSE = SPACE.
+        L_TMP_CONTROL_PAR-NO_OPEN  = ABAP_TRUE.  "没有新的假脱机请求
+      WHEN OTHERS.
+        L_TMP_CONTROL_PAR-NO_CLOSE = ABAP_TRUE.
+        L_TMP_CONTROL_PAR-NO_OPEN  = ABAP_TRUE.
+    ENDCASE.
+ 
+    IF L_LINES = 1 .
+      L_TMP_CONTROL_PAR-NO_CLOSE = SPACE.
+      L_TMP_CONTROL_PAR-NO_OPEN  = SPACE.
+    ENDIF.
+ 
+    CALL FUNCTION L_FNAME
+      EXPORTING
+*       ARCHIVE_INDEX        =
+*       ARCHIVE_INDEX_TAB    =
+*       ARCHIVE_PARAMETERS   =
+        CONTROL_PARAMETERS   = L_TMP_CONTROL_PAR
+*       MAIL_APPL_OBJ        =
+*       MAIL_RECIPIENT       =
+*       MAIL_SENDER          =
+        OUTPUT_OPTIONS       = L_OUTPUT_OPTIONS
+*       USER_SETTINGS        = 'X'
+      IMPORTING
+*       DOCUMENT_OUTPUT_INFO =
+        JOB_OUTPUT_INFO      = L_JOB_OUTPUT_INFO
+*       JOB_OUTPUT_OPTIONS   =
+      EXCEPTIONS
+        FORMATTING_ERROR     = 1
+        INTERNAL_ERROR       = 2
+        SEND_ERROR           = 3
+        USER_CANCELED        = 4
+        OTHERS               = 5.
+ 
+  ENDLOOP.
+ 
+ENDFORM.                    " FRM_PRINT 
